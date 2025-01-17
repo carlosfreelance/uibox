@@ -11,6 +11,7 @@ class UiBoxParallaxBox extends StatelessWidget {
     this.width,
     this.aspectRatio = 16 / 9,
     this.enableRadio = true,
+    this.enableImage = true,
     this.opacity = 0.7,
   });
 
@@ -22,6 +23,7 @@ class UiBoxParallaxBox extends StatelessWidget {
   final double? aspectRatio;
   final double? opacity;
   final bool? enableRadio;
+  final bool enableImage;
   final GlobalKey _backgroundImageKey = GlobalKey();
 
   @override
@@ -65,16 +67,18 @@ class UiBoxParallaxBox extends StatelessWidget {
         backgroundImageKey: _backgroundImageKey,
       ),
       children: [
-        SizedBox(
-          height: height!,
-          child: Image.asset(
-            imageUrl,
-            key: _backgroundImageKey,
-            fit: fit,
-            height: height,
-            width: width,
+        if (enableImage)
+          SizedBox(
+            height: height!,
+            child: Image.asset(
+              imageUrl,
+              key: _backgroundImageKey,
+              fit: fit,
+              height: height,
+              width: width,
+            ),
           ),
-        ),
+        if (!enableImage) SizedBox.shrink()
       ],
     );
   }
@@ -134,11 +138,11 @@ class ParallaxFlowDelegate extends FlowDelegate {
     // scrollable area.
     final viewportDimension = scrollable.position.viewportDimension;
     final scrollFraction =
-        (listItemOffset.dy / viewportDimension).clamp(0.0, 1.0);
+        (listItemOffset.dy / viewportDimension).clamp(0.0, 4.0);
 
     // Calculate the vertical alignment of the background
     // based on the scroll percent.
-    final verticalAlignment = Alignment(0.0, scrollFraction * 2 - 1);
+    final verticalAlignment = Alignment(0.0, scrollFraction * 4 - 1);
 
     // Convert the background alignment into a pixel offset for
     // painting purposes.
