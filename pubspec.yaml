@@ -1,13 +1,12 @@
 name: uibox
 description: A new Flutter package project.
-version: 0.0.4
+version: 0.0.6
 homepage: null
 
 environment:
   sdk: ^3.9.2
 
 dependencies:
-  device_info_plus: ^12.1.0
   flutter:
     sdk: flutter
   get: ^4.7.2

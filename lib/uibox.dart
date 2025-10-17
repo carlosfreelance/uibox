@@ -2,10 +2,8 @@ library uibox;
 
 export 'src/constants/enums.dart';
 
-import 'src/utils/device.dart';
 import 'src/utils/screen.dart';
 
-export 'src/utils/device.dart';
 export 'src/utils/extensions.dart';
 export 'src/utils/screen.dart';
 export 'src/class/animator.dart';
@@ -24,5 +22,4 @@ export 'src/extensions/extensions.dart';
 
 class UIBOX with Screen {
   static Screen get screen => Screen();
-  static Device get device => Device();
 }

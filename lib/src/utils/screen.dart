@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/widgets.dart';
-import 'package:web/web.dart' as web;
 
 import 'device.dart';
 
@@ -35,13 +34,7 @@ mixin class Screen {
   /// @ScreenSize.lg (for laptops and desktops and TV - biggers screens)
   static ScreenSize screenSize(BuildContext context) {
     if (Device.isWeb) {
-      final appVersion = web.window.navigator.appVersion.toUpperCase();
-      if (appVersion.contains('TIZEN') ||
-          appVersion.contains('WEBOS') ||
-          appVersion.contains('BOX') ||
-          appVersion.contains('TV')) {
-        return ScreenSize.lg;
-      }
+      return ScreenSize.lg;
     }
 
     final longestSide = Screen.longestSide(context);

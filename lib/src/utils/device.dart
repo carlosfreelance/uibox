@@ -1,4 +1,3 @@
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -55,19 +54,6 @@ mixin class Device {
     } else if (isDesktop) {
       return DeviceType.laptop;
     } else if (isAndroid || isIOS) {
-      DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-      if (isAndroid) {
-        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-        final model = androidInfo.model.toUpperCase();
-        if (model.contains('AFT') ||
-            model.contains('BOX') ||
-            model.contains('TV')) {
-          return DeviceType.tv;
-        }
-      } else if (isIOS) {
-        IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-        debugPrint(iosInfo.toString());
-      }
       if (screenSize == ScreenSize.xs) {
         return DeviceType.mobile;
       } else if (screenSize == ScreenSize.sm) {
@@ -80,34 +66,6 @@ mixin class Device {
     } else {
       return DeviceType.unknown;
     }
-  }
-
-  /// Get @TVDeviceType
-  /// @TVDeviceType.tizen
-  /// @TVDeviceType.webos
-  /// @TVDeviceType.androidtv
-  /// @TVDeviceType.firetv
-  /// @TVDeviceType.mitv
-  /// @TVDeviceType.unknown
-  static Future<TVDeviceType> tvDeviceType(BuildContext context) async {
-    final deviceType = await Device.deviceType(context);
-    if (deviceType == DeviceType.tv) {
-      if (isAndroid) {
-        DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-        if (isAndroid) {
-          AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-          final model = androidInfo.model.toUpperCase();
-          if (model.contains('AFT')) {
-            return TVDeviceType.firetv;
-          } else if (model.contains('BOX')) {
-            return TVDeviceType.mitv;
-          } else if (model.contains('TV')) {
-            return TVDeviceType.androidtv;
-          }
-        }
-      }
-    }
-    return TVDeviceType.unknown;
   }
 }
 

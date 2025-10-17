@@ -47,12 +47,7 @@ extension ScreenExtension on BuildContext {
   double get bottomBarHeight => Screen.bottomBarHeight(this);
 
   /// Get value by screen size
-  T? valueReponsive<T extends Object>({
-    T? xs,
-    T? sm,
-    T? md,
-    T? lg,
-  }) =>
+  T? valueReponsive<T extends Object>({T? xs, T? sm, T? md, T? lg}) =>
       Screen.valueByScreen<T>(this, xs: xs, sm: sm, md: md, lg: lg);
 }
 
@@ -107,7 +102,6 @@ extension DeviceExtension on BuildContext {
   /// @TVDeviceType.firetv
   /// @TVDeviceType.mitv
   /// @TVDeviceType.unknown
-  Future<TVDeviceType> get tvDeviceType => Device.tvDeviceType(this);
 }
 
 extension NumExtension on num {
