@@ -1,6 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:universal_io/io.dart' as io;
+import 'package:get/get.dart';
 
 class UiBoxHoverWidget extends StatefulWidget {
   ///
@@ -12,11 +12,11 @@ class UiBoxHoverWidget extends StatefulWidget {
   /// Builder for showing how the widget should be in hover or unhovered state
   ///
   final Widget Function(BuildContext context, bool isHovered) builder;
-  const UiBoxHoverWidget(
-      {Key? key,
-      required this.builder,
-      this.hoverDuration = const Duration(milliseconds: 1200)})
-      : super(key: key);
+  const UiBoxHoverWidget({
+    Key? key,
+    required this.builder,
+    this.hoverDuration = const Duration(milliseconds: 1200),
+  }) : super(key: key);
 
   @override
   State<UiBoxHoverWidget> createState() => _UiBoxHoverWidgetState();
@@ -26,7 +26,7 @@ class _UiBoxHoverWidgetState extends State<UiBoxHoverWidget> {
   bool isHovered = false;
   @override
   Widget build(BuildContext context) {
-    return io.Platform.isAndroid || io.Platform.isIOS
+    return GetPlatform.isAndroid || GetPlatform.isIOS
         ? GestureDetector(
             onPanCancel: () {
               Future.delayed(widget.hoverDuration).then((_) {

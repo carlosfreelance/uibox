@@ -13,9 +13,3 @@ export '../textless/uibox_textless.dart';
 
 export 'uibox_row.dart';
 export 'uibox_col.dart';
-
-// Seo Widget
-export 'seo/uibox_app_text.dart';
-export 'seo/uibox_app_link.dart';
-export 'seo/uibox_app_image.dart';
-export 'seo/uibox_app_head.dart';

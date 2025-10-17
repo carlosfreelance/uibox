@@ -74,7 +74,7 @@ class UiBoxParallaxBox extends StatelessWidget {
               imageUrl,
               key: _backgroundImageKey,
               fit: fit,
-              height: height,
+              height: height!,
               width: width,
             ),
           ),

@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/widgets.dart';
-import 'package:universal_html/html.dart' as html;
+import 'package:web/web.dart' as web;
 
 import 'device.dart';
 
@@ -25,8 +25,8 @@ mixin class Screen {
   static double get _ppi => Device.isWeb
       ? 150
       : Device.isAndroid || Device.isIOS
-          ? 160
-          : 96;
+      ? 160
+      : 96;
 
   /// Get screen size
   /// @ScreenSize.xs (for phones - screens less than 768px wide)
@@ -35,7 +35,7 @@ mixin class Screen {
   /// @ScreenSize.lg (for laptops and desktops and TV - biggers screens)
   static ScreenSize screenSize(BuildContext context) {
     if (Device.isWeb) {
-      final appVersion = html.window.navigator.appVersion.toUpperCase();
+      final appVersion = web.window.navigator.appVersion.toUpperCase();
       if (appVersion.contains('TIZEN') ||
           appVersion.contains('WEBOS') ||
           appVersion.contains('BOX') ||
@@ -131,9 +131,4 @@ mixin class Screen {
 /// @ScreenSize.sm  - tablets
 /// @ScreenSize.md  - for small laptops
 /// @ScreenSize.lg  - for laptops and desktops and TV
-enum ScreenSize {
-  xs,
-  sm,
-  md,
-  lg,
-}
+enum ScreenSize { xs, sm, md, lg }

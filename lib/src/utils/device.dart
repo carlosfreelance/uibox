@@ -1,8 +1,8 @@
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:universal_html/html.dart' as html;
-import 'package:universal_io/io.dart';
+import 'package:get/get.dart';
+import 'package:web/web.dart' as web;
 
 import 'screen.dart';
 
@@ -24,12 +24,12 @@ mixin class Device {
 
   static bool get isWeb => kIsWeb;
 
-  static bool get isWindows => Platform.isWindows;
-  static bool get isLinux => Platform.isLinux;
-  static bool get isMacOS => Platform.isMacOS;
-  static bool get isAndroid => Platform.isAndroid;
-  static bool get isFuchsia => Platform.isFuchsia;
-  static bool get isIOS => Platform.isIOS;
+  static bool get isWindows => GetPlatform.isWindows;
+  static bool get isLinux => GetPlatform.isLinux;
+  static bool get isMacOS => GetPlatform.isMacOS;
+  static bool get isAndroid => GetPlatform.isAndroid;
+  static bool get isFuchsia => GetPlatform.isFuchsia;
+  static bool get isIOS => GetPlatform.isIOS;
 
   /// Get @DeviceType
   /// @DeviceType.MOBILE
@@ -40,7 +40,7 @@ mixin class Device {
   static Future<DeviceType> deviceType(BuildContext context) async {
     final screenSize = Screen.screenSize(context);
     if (isWeb) {
-      final appVersion = html.window.navigator.appVersion.toUpperCase();
+      final appVersion = web.window.navigator.appVersion.toUpperCase();
       if (appVersion.contains('TIZEN') ||
           appVersion.contains('WEBOS') ||
           appVersion.contains('BOX') ||
@@ -100,7 +100,7 @@ mixin class Device {
     final deviceType = await Device.deviceType(context);
     if (deviceType == DeviceType.tv) {
       if (isWeb) {
-        final appVersion = html.window.navigator.appVersion.toUpperCase();
+        final appVersion = web.window.navigator.appVersion.toUpperCase();
         if (appVersion.contains('TIZEN')) {
           return TVDeviceType.tizen;
         } else if (appVersion.contains('WEBOS')) {
@@ -126,20 +126,7 @@ mixin class Device {
 }
 
 /// @DeviceType
-enum DeviceType {
-  mobile,
-  tablet,
-  laptop,
-  tv,
-  unknown,
-}
+enum DeviceType { mobile, tablet, laptop, tv, unknown }
 
 /// @TVDeviceType
-enum TVDeviceType {
-  tizen,
-  webos,
-  androidtv,
-  firetv,
-  mitv,
-  unknown,
-}
+enum TVDeviceType { tizen, webos, androidtv, firetv, mitv, unknown }
