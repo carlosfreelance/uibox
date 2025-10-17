@@ -2,7 +2,6 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:web/web.dart' as web;
 
 import 'screen.dart';
 
@@ -40,13 +39,7 @@ mixin class Device {
   static Future<DeviceType> deviceType(BuildContext context) async {
     final screenSize = Screen.screenSize(context);
     if (isWeb) {
-      final appVersion = web.window.navigator.appVersion.toUpperCase();
-      if (appVersion.contains('TIZEN') ||
-          appVersion.contains('WEBOS') ||
-          appVersion.contains('BOX') ||
-          appVersion.contains('TV')) {
-        return DeviceType.tv;
-      } else if (isWindows || isLinux || isMacOS) {
+      if (isWindows || isLinux || isMacOS) {
         return DeviceType.laptop;
       } else if (screenSize == ScreenSize.xs) {
         return DeviceType.mobile;
@@ -99,14 +92,7 @@ mixin class Device {
   static Future<TVDeviceType> tvDeviceType(BuildContext context) async {
     final deviceType = await Device.deviceType(context);
     if (deviceType == DeviceType.tv) {
-      if (isWeb) {
-        final appVersion = web.window.navigator.appVersion.toUpperCase();
-        if (appVersion.contains('TIZEN')) {
-          return TVDeviceType.tizen;
-        } else if (appVersion.contains('WEBOS')) {
-          return TVDeviceType.webos;
-        }
-      } else if (isAndroid) {
+      if (isAndroid) {
         DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
         if (isAndroid) {
           AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
