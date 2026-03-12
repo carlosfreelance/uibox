@@ -8,6 +8,7 @@ export 'uibox_responsive_builder_widget.dart';
 export 'uibox_visible_widget_widget.dart';
 export 'uibox_parallax_box_widget.dart';
 export 'uibox_sizedBox_widget.dart';
+export 'uibox_responsive_value.dart';
 
 export '../textless/uibox_textless.dart';
 
