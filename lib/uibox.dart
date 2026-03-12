@@ -5,6 +5,7 @@ export 'src/constants/enums.dart';
 import 'src/utils/screen.dart';
 
 export 'src/utils/extensions.dart';
+export 'src/utils/responsive_extensions.dart';
 export 'src/utils/screen.dart';
 export 'src/class/animator.dart';
 
