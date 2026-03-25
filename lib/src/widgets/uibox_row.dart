@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../utils/utilities.dart';
 import 'uibox_col.dart';
+import 'uitbox_optimized_equal_height_wrap.dart';
 
 class UiBoxRow extends StatelessWidget {
   ///
@@ -70,9 +71,11 @@ class UiBoxRow extends StatelessWidget {
   /// Padding to the widget
   ///
   final EdgeInsets padding;
+  final bool equalHeightWrap;
   const UiBoxRow({
     Key? key,
     this.padding = const EdgeInsets.all(0),
+    this.equalHeightWrap = false,
     this.verticalDirection = VerticalDirection.down,
     this.verticalAlignment = WrapAlignment.start,
     required this.children,
@@ -86,85 +89,101 @@ class UiBoxRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: padding,
-      child: LayoutBuilder(builder: (context, constraints) {
-        double maxWidth = constraints.maxWidth;
-        List<Widget> wrapChildrens = [];
-        List<List<UiBoxCol>> horizontalChildrens = [];
-        List<UiBoxCol> verticalChildrens = [];
-        int accumulatedWidth = 0;
-        for (int i = 0; i < children.length; i++) {
-          final UiBoxCol col = children.elementAt(i);
-          Map<String, int> allColValues =
-              UiBoxUtilities.getAllColValues(col.sizes);
-          String currentPrefix = UiBoxUtilities.getPrefixByWidth(maxWidth);
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          double maxWidth = constraints.maxWidth;
+          List<Widget> wrapChildrens = [];
+          List<List<UiBoxCol>> horizontalChildrens = [];
+          List<UiBoxCol> verticalChildrens = [];
+          int accumulatedWidth = 0;
+          for (int i = 0; i < children.length; i++) {
+            final UiBoxCol col = children.elementAt(i);
+            Map<String, int> allColValues = UiBoxUtilities.getAllColValues(
+              col.sizes,
+            );
+            String currentPrefix = UiBoxUtilities.getPrefixByWidth(maxWidth);
 
-          final int colWidth = allColValues[currentPrefix] ?? 12;
-          if (accumulatedWidth + colWidth > 12) {
-            horizontalChildrens.add((verticalChildrens));
-            verticalChildrens = <UiBoxCol>[];
-            accumulatedWidth = 0;
+            final int colWidth = allColValues[currentPrefix] ?? 12;
+            if (accumulatedWidth + colWidth > 12) {
+              horizontalChildrens.add((verticalChildrens));
+              verticalChildrens = <UiBoxCol>[];
+              accumulatedWidth = 0;
+            }
+
+            verticalChildrens.add(col);
+            accumulatedWidth += colWidth;
           }
 
-          verticalChildrens.add(col);
-          accumulatedWidth += colWidth;
-        }
-
-        if (accumulatedWidth >= 0) {
-          horizontalChildrens.add(
-            verticalChildrens,
-          );
-        }
-        for (List<UiBoxCol> child in horizontalChildrens) {
-          for (UiBoxCol subChild in child) {
-            String currentPrefix = UiBoxUtilities.getPrefixByWidth(maxWidth);
-            if (!subChild.invisibleFor.contains(currentPrefix)) {
-              double offsetSize = subChild.getOffsetWidth(context);
-              double spaceToRemove = child.length > 1
-                  ? ((child.length - 1) * horizontalSpacing)
-                  : 0;
-              for (UiBoxCol offsetChecking in child) {
-                double offsetSize = offsetChecking.getOffsetWidth(context);
-                if (offsetSize > 0) {
-                  spaceToRemove += horizontalSpacing;
+          if (accumulatedWidth >= 0) {
+            horizontalChildrens.add(verticalChildrens);
+          }
+          for (List<UiBoxCol> child in horizontalChildrens) {
+            for (UiBoxCol subChild in child) {
+              String currentPrefix = UiBoxUtilities.getPrefixByWidth(maxWidth);
+              if (!subChild.invisibleFor.contains(currentPrefix)) {
+                double offsetSize = subChild.getOffsetWidth(context);
+                double spaceToRemove = child.length > 1
+                    ? ((child.length - 1) * horizontalSpacing)
+                    : 0;
+                for (UiBoxCol offsetChecking in child) {
+                  double offsetSize = offsetChecking.getOffsetWidth(context);
+                  if (offsetSize > 0) {
+                    spaceToRemove += horizontalSpacing;
+                  }
                 }
-              }
 
-              double availableWidth = maxWidth - spaceToRemove;
-              if (offsetSize > 0) {
-                Map<String, int> prefixMap =
-                    UiBoxUtilities.getAllOffsetsValue(subChild.offset);
+                double availableWidth = maxWidth - spaceToRemove;
+                if (offsetSize > 0) {
+                  Map<String, int> prefixMap =
+                      UiBoxUtilities.getAllOffsetsValue(subChild.offset);
+                  int currentSegmentValue = prefixMap[currentPrefix] ?? 0;
+                  double offsetWidth =
+                      availableWidth * (currentSegmentValue / 12);
+                  wrapChildrens.add(
+                    SizedBox(width: offsetWidth, child: const SizedBox()),
+                  );
+                }
+                Map<String, int> prefixMap = UiBoxUtilities.getAllColValues(
+                  subChild.sizes,
+                );
                 int currentSegmentValue = prefixMap[currentPrefix] ?? 0;
-                double offsetWidth =
-                    availableWidth * (currentSegmentValue / 12);
-                wrapChildrens.add(SizedBox(
-                  width: offsetWidth,
-                  child: const SizedBox(),
-                ));
+                double childWidth = availableWidth * (currentSegmentValue / 12);
+                wrapChildrens.add(
+                  Container(
+                    padding: subChild.padding,
+                    margin: subChild.margin,
+                    decoration: subChild.decoration,
+                    width: childWidth,
+                    child: subChild.child,
+                  ),
+                );
               }
-              Map<String, int> prefixMap =
-                  UiBoxUtilities.getAllColValues(subChild.sizes);
-              int currentSegmentValue = prefixMap[currentPrefix] ?? 0;
-              double childWidth = availableWidth * (currentSegmentValue / 12);
-              wrapChildrens.add(Container(
-                padding: subChild.padding,
-                margin: subChild.margin,
-                decoration: subChild.decoration,
-                width: childWidth,
-                child: subChild.child,
-              ));
             }
           }
-        }
-        return Wrap(
-          crossAxisAlignment: crossAxisAlignment,
-          runSpacing: verticalSpacing,
-          spacing: horizontalSpacing,
-          verticalDirection: verticalDirection,
-          alignment: horizontalAlignment,
-          runAlignment: verticalAlignment,
-          children: wrapChildrens,
-        );
-      }),
+
+          if (equalHeightWrap) {
+            return UiBoxOptimizedEqualHeightWrap(
+              crossAxisAlignment: crossAxisAlignment,
+              verticalSpacing: verticalSpacing,
+              horizontalSpacing: horizontalSpacing,
+              verticalDirection: verticalDirection,
+              horizontalAlignment: horizontalAlignment,
+              verticalAlignment: verticalAlignment,
+              children: wrapChildrens,
+            );
+          } else {
+            return Wrap(
+              crossAxisAlignment: crossAxisAlignment,
+              runSpacing: verticalSpacing,
+              spacing: horizontalSpacing,
+              verticalDirection: verticalDirection,
+              alignment: horizontalAlignment,
+              runAlignment: verticalAlignment,
+              children: wrapChildrens,
+            );
+          }
+        },
+      ),
     );
   }
 }
