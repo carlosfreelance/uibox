@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../utils/size_reporter.dart';
 import '../utils/utilities.dart';
 import 'uibox_col.dart';
-import 'uitbox_optimized_equal_height_wrap.dart';
 
-class UiBoxRow extends StatelessWidget {
+class UiBoxRow extends StatefulWidget {
   ///
   /// List of [UiBoxCol] childrens
   ///
@@ -71,11 +71,17 @@ class UiBoxRow extends StatelessWidget {
   /// Padding to the widget
   ///
   final EdgeInsets padding;
-  final bool equalHeightWrap;
+  final double? itemHeight;
+  final double? itemMaxHeight;
+  final double? itemMinHeight;
+  final bool expandHeight;
+  final bool matchChildrenHeight;
   const UiBoxRow({
     Key? key,
     this.padding = const EdgeInsets.all(0),
-    this.equalHeightWrap = false,
+    this.itemHeight,
+    this.itemMaxHeight,
+    this.itemMinHeight,
     this.verticalDirection = VerticalDirection.down,
     this.verticalAlignment = WrapAlignment.start,
     required this.children,
@@ -83,12 +89,31 @@ class UiBoxRow extends StatelessWidget {
     this.horizontalAlignment = WrapAlignment.start,
     this.horizontalSpacing = 20.0,
     this.verticalSpacing = 20.0,
+    this.expandHeight = false,
+    this.matchChildrenHeight = false,
   }) : super(key: key);
+
+  @override
+  State<UiBoxRow> createState() => _UiBoxRowState();
+}
+
+class _UiBoxRowState extends State<UiBoxRow> {
+  double _maxHeight = 0;
+
+  void _updateMaxHeight(double newHeight) {
+    // Solo hacer setState si el máximo realmente cambió
+    if (newHeight > _maxHeight) {
+      setState(() {
+        _maxHeight = newHeight;
+      });
+      print("Nuevo alto máximo: $_maxHeight");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: padding,
+      padding: widget.padding,
       child: LayoutBuilder(
         builder: (context, constraints) {
           double maxWidth = constraints.maxWidth;
@@ -96,8 +121,8 @@ class UiBoxRow extends StatelessWidget {
           List<List<UiBoxCol>> horizontalChildrens = [];
           List<UiBoxCol> verticalChildrens = [];
           int accumulatedWidth = 0;
-          for (int i = 0; i < children.length; i++) {
-            final UiBoxCol col = children.elementAt(i);
+          for (int i = 0; i < widget.children.length; i++) {
+            final UiBoxCol col = widget.children.elementAt(i);
             Map<String, int> allColValues = UiBoxUtilities.getAllColValues(
               col.sizes,
             );
@@ -123,12 +148,12 @@ class UiBoxRow extends StatelessWidget {
               if (!subChild.invisibleFor.contains(currentPrefix)) {
                 double offsetSize = subChild.getOffsetWidth(context);
                 double spaceToRemove = child.length > 1
-                    ? ((child.length - 1) * horizontalSpacing)
+                    ? ((child.length - 1) * widget.horizontalSpacing)
                     : 0;
                 for (UiBoxCol offsetChecking in child) {
                   double offsetSize = offsetChecking.getOffsetWidth(context);
                   if (offsetSize > 0) {
-                    spaceToRemove += horizontalSpacing;
+                    spaceToRemove += widget.horizontalSpacing;
                   }
                 }
 
@@ -148,40 +173,66 @@ class UiBoxRow extends StatelessWidget {
                 );
                 int currentSegmentValue = prefixMap[currentPrefix] ?? 0;
                 double childWidth = availableWidth * (currentSegmentValue / 12);
-                wrapChildrens.add(
-                  Container(
-                    padding: subChild.padding,
-                    margin: subChild.margin,
-                    decoration: subChild.decoration,
-                    width: childWidth,
-                    child: subChild.child,
-                  ),
-                );
+                if (widget.matchChildrenHeight) {
+                  wrapChildrens.add(
+                    SizeReporter(
+                      tolerance: 0.5, // Margen de 1px para evitar micro-cambios
+                      onHeightChange: _updateMaxHeight,
+                      child: Container(
+                        constraints:
+                            widget.itemMaxHeight == null &&
+                                widget.itemMinHeight == null
+                            ? null
+                            : BoxConstraints(
+                                maxHeight:
+                                    widget.itemMaxHeight ?? double.infinity,
+                                minHeight: widget.itemMinHeight ?? 0,
+                              ),
+                        padding: subChild.padding,
+                        margin: subChild.margin,
+                        decoration: subChild.decoration,
+                        width: childWidth,
+                        height: _maxHeight > 0 ? _maxHeight : null,
+                        child: subChild.child,
+                      ),
+                    ),
+                  );
+                } else {
+                  wrapChildrens.add(
+                    Container(
+                      constraints:
+                          widget.itemMaxHeight == null &&
+                              widget.itemMinHeight == null
+                          ? null
+                          : BoxConstraints(
+                              maxHeight:
+                                  widget.itemMaxHeight ?? double.infinity,
+                              minHeight: widget.itemMinHeight ?? 0,
+                            ),
+                      padding: subChild.padding,
+                      margin: subChild.margin,
+                      decoration: subChild.decoration,
+                      width: childWidth,
+                      height: widget.expandHeight
+                          ? constraints.maxHeight
+                          : subChild.height ?? widget.itemHeight,
+                      child: subChild.child,
+                    ),
+                  );
+                }
               }
             }
           }
 
-          if (equalHeightWrap) {
-            return UiBoxOptimizedEqualHeightWrap(
-              crossAxisAlignment: crossAxisAlignment,
-              verticalSpacing: verticalSpacing,
-              horizontalSpacing: horizontalSpacing,
-              verticalDirection: verticalDirection,
-              horizontalAlignment: horizontalAlignment,
-              verticalAlignment: verticalAlignment,
-              children: wrapChildrens,
-            );
-          } else {
-            return Wrap(
-              crossAxisAlignment: crossAxisAlignment,
-              runSpacing: verticalSpacing,
-              spacing: horizontalSpacing,
-              verticalDirection: verticalDirection,
-              alignment: horizontalAlignment,
-              runAlignment: verticalAlignment,
-              children: wrapChildrens,
-            );
-          }
+          return Wrap(
+            crossAxisAlignment: widget.crossAxisAlignment,
+            runSpacing: widget.verticalSpacing,
+            spacing: widget.horizontalSpacing,
+            verticalDirection: widget.verticalDirection,
+            alignment: widget.horizontalAlignment,
+            runAlignment: widget.verticalAlignment,
+            children: wrapChildrens,
+          );
         },
       ),
     );
