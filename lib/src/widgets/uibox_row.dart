@@ -99,14 +99,21 @@ class UiBoxRow extends StatefulWidget {
 
 class _UiBoxRowState extends State<UiBoxRow> {
   double _maxHeight = 0;
+  bool _isReady = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   void _updateMaxHeight(double newHeight) {
-    // Solo hacer setState si el máximo realmente cambió
-    if (newHeight > _maxHeight) {
+    // Solo actualizar si es significativamente diferente
+    if (!_isReady || newHeight > _maxHeight) {
       setState(() {
         _maxHeight = newHeight;
+        _isReady = true;
       });
-      print("Nuevo alto máximo: $_maxHeight");
+      print("✅ Alto máximo actualizado: $_maxHeight");
     }
   }
 
@@ -178,6 +185,7 @@ class _UiBoxRowState extends State<UiBoxRow> {
                     SizeReporter(
                       tolerance: 0.5, // Margen de 1px para evitar micro-cambios
                       onHeightChange: _updateMaxHeight,
+                      framesToWait: 5,
                       child: Container(
                         constraints:
                             widget.itemMaxHeight == null &&
