@@ -185,7 +185,6 @@ class _UiBoxRowState extends State<UiBoxRow> {
                     SizeReporter(
                       tolerance: 0.5, // Margen de 1px para evitar micro-cambios
                       onHeightChange: _updateMaxHeight,
-                      framesToWait: 5,
                       child: Container(
                         constraints:
                             widget.itemMaxHeight == null &&
