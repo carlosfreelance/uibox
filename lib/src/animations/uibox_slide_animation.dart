@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../constants/enums.dart';
 import 'wrappers/single_animation_wrapper.dart';

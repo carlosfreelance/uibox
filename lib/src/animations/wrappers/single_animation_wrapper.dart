@@ -1,5 +1,5 @@
 import 'package:visibility_detector/visibility_detector.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class SingleAnimationWrapper<T> extends StatefulWidget {
   final Widget Function(AnimationController, T) child;

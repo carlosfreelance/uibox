@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import '../animations/uibox_bounce_animation.dart';
 import '../animations/uibox_fade_out_animation.dart';
 import '../animations/uibox_flip_animation.dart';

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:uibox/src/widgets/uibox_responsive_value.dart';
 
 import '../utils/screen_breakpoints.dart';

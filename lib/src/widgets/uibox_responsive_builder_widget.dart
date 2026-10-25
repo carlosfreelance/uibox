@@ -1,6 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import '../utils/device.dart';
 
 class UiBoxResponsiveDevice extends StatelessWidget {

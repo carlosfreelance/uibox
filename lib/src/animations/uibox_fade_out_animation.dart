@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:uibox/src/constants/enums.dart';
 
 import 'wrappers/double_animation_wrapper.dart';

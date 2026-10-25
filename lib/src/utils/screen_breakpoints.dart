@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Enum con TODOS los tamaños de pantalla (de XS a 4XL)
 enum ScreenSize { xs, sm, md, lg, xl, xxl, xxxl, xl_4k }
